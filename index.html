@@ -2,9 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Confirmação de Presença</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -22,10 +20,6 @@
       max-width: 400px;
       text-align: center;
       box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-    .logo {
-      width: 100px;
-      margin: 0 auto 20px;
     }
     .badge {
       background-color: #4676D7;
@@ -46,54 +40,44 @@
 </head>
 <body>
   <div class="card">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Bras%C3%A3o_de_Portugal.png" alt="Logo" class="logo">
     <h2>Hackathon Smartspace</h2>
     <h3>Confirmação de Presença</h3>
-    <p><strong>Nome:</strong> <span id="nome"></span></p>
-    <p><strong>Quantidade de Confirmações:</strong> <span class="badge" id="qtd"></span></p>
-    <div class="alert" id="mensagem"></div>
+    <p><strong>ID:</strong> <span id="id"></span></p>
+    <p><strong>Quantidade de Confirmações:</strong> <span class="badge" id="qtd">0</span></p>
+    <div class="alert" id="mensagem">Validando...</div>
   </div>
 
   <script>
-    async function validarPresenca() {
+    function validarPresenca() {
       const urlParams = new URLSearchParams(window.location.search);
       const id = urlParams.get('id');
-  
+
+      const idSpan = document.getElementById('id');
+      const qtdSpan = document.getElementById('qtd');
+      const mensagem = document.getElementById('mensagem');
+
       if (!id) {
-        document.getElementById('mensagem').textContent = 'Código de acesso ausente na URL.';
+        mensagem.textContent = 'ID ausente na URL.';
         return;
       }
-  
-      try {
-        const response = await fetch('https://noiton.evilasio.online/webhook/validar', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id })
-        });
-  
-        const result = await response.json();
-  
-        if (result.status === 'error') {
-          document.getElementById('mensagem').textContent = result.message;
-          return;
-        }
-  
-        document.getElementById('nome').textContent = result.nome;
-        document.getElementById('qtd').textContent = result.qtd_confirmacoes;
-        document.getElementById('mensagem').textContent = result.message;
-  
-        if (result.status === 'success') {
-          document.getElementById('mensagem').style.background = '#28a745';
-        }
-  
-      } catch (e) {
-        document.getElementById('mensagem').textContent = 'Erro ao validar presença.';
+
+      idSpan.textContent = id;
+
+      const chave = `confirmacao_${id}`;
+      const jaConfirmado = localStorage.getItem(chave);
+
+      if (jaConfirmado) {
+        qtdSpan.textContent = 1;
+        mensagem.textContent = '⚠️ Presença já confirmada!';
+      } else {
+        localStorage.setItem(chave, '1');
+        qtdSpan.textContent = 1;
+        mensagem.textContent = '✅ Presença confirmada com sucesso!';
+        mensagem.style.background = '#28a745';
       }
     }
-  
+
     validarPresenca();
   </script>
-    
-  
 </body>
 </html>
