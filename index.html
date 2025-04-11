@@ -42,7 +42,7 @@
   <div class="card">
     <h2>Hackathon Smartspace</h2>
     <h3>Confirmação de Presença</h3>
-    <p><strong>Convidado:</strong> <span id="name"></span></p>
+    <p><strong>ID:</strong> <span id="id"></span></p>
     <p><strong>Quantidade de Confirmações:</strong> <span class="badge" id="qtd">0</span></p>
     <div class="alert" id="mensagem">Validando...</div>
   </div>
@@ -51,10 +51,8 @@
     function validarPresenca() {
       const urlParams = new URLSearchParams(window.location.search);
       const id = urlParams.get('id');
-      const name = urlParams.get('name');
 
       const idSpan = document.getElementById('id');
-      const nameSpan = document.getElementById('name');
       const qtdSpan = document.getElementById('qtd');
       const mensagem = document.getElementById('mensagem');
 
@@ -64,7 +62,6 @@
       }
 
       idSpan.textContent = id;
-      nameSpan.textContent = decodeURIComponent(name || 'Desconhecido');
 
       const chave = `confirmacao_${id}`;
       const jaConfirmado = localStorage.getItem(chave);
