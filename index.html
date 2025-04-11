@@ -64,7 +64,7 @@
       }
 
       idSpan.textContent = id;
-      nameSpan.textContent = decodeURIComponent(nome || 'Desconhecido');
+      nameSpan.textContent = decodeURIComponent(name || 'Desconhecido');
 
       const chave = `confirmacao_${id}`;
       const jaConfirmado = localStorage.getItem(chave);
