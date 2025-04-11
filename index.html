@@ -47,7 +47,8 @@
 <body>
   <div class="card">
     <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Bras%C3%A3o_de_Portugal.png" alt="Logo" class="logo">
-    <h2>Confirmação de Presença</h2>
+    <h2>Hackathon Smartspace</h2>
+    <h3>Confirmação de Presença</h3>
     <p><strong>Nome:</strong> <span id="nome"></span></p>
     <p><strong>Quantidade de Confirmações:</strong> <span class="badge" id="qtd"></span></p>
     <div class="alert" id="mensagem"></div>
@@ -57,43 +58,49 @@
     const supabaseUrl = 'https://mtpokzvohoodxzdqvyfm.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10cG9renZvaG9vZHh6ZHF2eWZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQzMTk1ODIsImV4cCI6MjA1OTg5NTU4Mn0.e6VIt6q1a1jmlsJWLWbd4nnn_bXGfgK2EcmhZxW6tvo';
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
+  
     async function validarPresenca() {
       const urlParams = new URLSearchParams(window.location.search);
       const id = urlParams.get('id');
-
+  
+      if (!id) {
+        document.getElementById('mensagem').textContent = 'Código de acesso ausente na URL.';
+        return;
+      }
+  
       const { data, error } = await supabase
         .from('confirmacoes')
         .select('*')
         .eq('id', id)
         .single();
-
+  
       if (error || !data) {
         document.getElementById('mensagem').textContent = 'Código inválido ou não encontrado.';
         return;
       }
-
+  
       const { nome, qtd_confirmacoes } = data;
-
+  
       document.getElementById('nome').textContent = nome;
       document.getElementById('qtd').textContent = qtd_confirmacoes + 1;
-
+  
       const novaQtd = qtd_confirmacoes + 1;
-
+  
       await supabase
         .from('confirmacoes')
         .update({ qtd_confirmacoes: novaQtd, ultima_confirmacao: new Date() })
         .eq('id', id);
-
+  
       if (qtd_confirmacoes > 0) {
-        document.getElementById('mensagem').textContent = 'Quantidade excedida de confirmações!';
+        document.getElementById('mensagem').textContent = 'Código já foi utilizado!';
       } else {
         document.getElementById('mensagem').textContent = 'Presença confirmada com sucesso!';
         document.getElementById('mensagem').style.background = '#28a745';
       }
     }
-
+  
     validarPresenca();
   </script>
+  
 </body>
 </html>
